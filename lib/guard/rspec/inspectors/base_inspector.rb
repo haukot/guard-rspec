@@ -46,7 +46,10 @@ module Guard
           files = (spec_files + feature_files).flatten
 
           paths.select do |path|
-            (files & [@chdir ? File.join(@chdir, path) : path]).any?
+            chdir_path = @chdir ? File.join(@chdir, path) : path
+            # to allow paths with numbers at the end, like my_spec.rb:12:432
+            without_line_numbers = chdir_path.gsub(/(:\d+)+$/, "")
+            files.include?(without_line_numbers)
           end
         end
 
